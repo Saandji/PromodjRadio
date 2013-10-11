@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link href="css/bootstrap.css" rel="stylesheet" media="screen">
+    <link href="css/popup.css" rel="stylesheet" media="screen">
+    <link href="css/jquery-ui-1.10.3.custom.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="js/libs/jquery-1.10.2.js"></script>
+    <script type="text/javascript" src="/js/libs/jquery-ui-1.10.3.custom.min.js"></script>
+    <script type="text/javascript" src="/js/libs/jquery.tmpl.min.js"></script>
+    <script type="text/javascript" src="js/libs/bootstrap.js"></script>
+    <script type="text/javascript" src="/js/libs/underscore-1.5.1.js"></script>
+    <script type="text/javascript" src="/js/libs/backbone-min.js"></script>
+    <script type="text/javascript" src="/js/libs/backbone.global-events.js"></script>
+    <script type="text/javascript" src="/js/libs/template-manager.js"></script>
+    <script type="text/javascript" src="/js/common/backbone.js"></script>
+    <script type="text/javascript" src="/js/common/popup.js"></script>
+
+    <script id="radio-player-template" type="text/x-jquery-tmpl">
+        <div class="row">
+            <div class="span4">
+                <div class="navbar navbar-fixed-top">
+                    <div class="navbar-inner">
+                        <a class="brand" href="#">
+                            <span class="header-logo"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span4 radio-list-container"></div>
+            <div class="navbar navbar-fixed-bottom">
+                <div class="navbar-inner"></div>
+            </div>
+        </div>
+    </script>
+
+    <script id="radio-station-template" type="text/x-jquery-tmpl">
+        <div class="row">
+            <div class="span1"><span class="{{= name}} can_hover radio_logo {{if isActive}}active{{/if}}"></span></div>
+            <div class="span3">
+                <div class="track-placeholder"></div>
+            </div>
+        </div>
+    </script>
+</head>
+<body>
+<div class="container global-container"></div>
+</body>
+</html>

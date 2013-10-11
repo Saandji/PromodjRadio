@@ -1,0 +1,300 @@
+body {
+    height: 400px;
+}
+
+.global-container {
+    width: 100%;
+}
+
+.radio-station-list {
+
+}
+
+.footer {
+    height: 100%;
+    clear: left;
+    position: relative;
+}
+
+.track {
+    height: auto;
+    padding-top: 4px;
+    padding-bottom: .25em;
+    margin: 9px;
+    clear: left;
+    position: relative;
+}
+
+a.avatar {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.track .avatar {
+    position: absolute;
+    left: 0;
+    top: 2px;
+}
+
+a.avatar img {
+    margin-top: 1px;
+    border-radius: 4px;
+    width: 43px;
+    height: 43px;
+}
+
+.track img.avatar {
+    margin-right: 6px;
+    margin-bottom: 1px;
+}
+
+.track .title {
+    overflow: hidden;
+    height: 1.25em;
+    word-wrap: normal;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.track .radiostamp {
+    font-weight: bold;
+    color: #c6190e;
+    font-size: .85em;
+    float:right;
+}
+
+.track .icons {
+    padding-top: 4px;
+    font-size: .85em;
+    display: inline-table;
+}
+
+span.comments_count {
+    padding: 0;
+    font-size: 1em;
+}
+
+span.comments_count a {
+    color: #616161;
+    padding-right: 14px;
+    padding-left: 2px;
+    background-image: url(/img/icons/comments.gif);
+    background-position: right bottom;
+    background-repeat: no-repeat;
+    text-decoration: none;
+    margin-left: 4px;
+    margin-right: 12px;
+}
+
+span.comments_count a:hover {
+    color: #007ab1;
+    background-image: url(/img/icons/comments_hover.gif)
+}
+
+span.comments_count a:hover span.newc {
+    color: #007ab1
+}
+
+span.downloads_count {
+    padding: 0;
+    font-size: 1em;
+}
+
+span.downloads_count a {
+    color: #616161;
+    padding-right: 12px;
+    padding-left: 2px;
+    background-image: url(/img/icons/download.gif);
+    background-position: right 75%;
+    background-repeat: no-repeat;
+    text-decoration: none;
+    margin-right: 10px;
+}
+span.downloads_count a:hover{
+    color:#007ab1;
+    background-image:url(/img/icons/download_hover.gif)
+}
+
+span.balls_count {
+    padding: 0;
+    font-size: 1em;
+    color: #c6190e;
+}
+
+span.balls_count a {
+    color: #616161;
+    padding-left: 6px;
+    padding-right: 4px;
+    background-image: url(/img/icons/balls.gif);
+    background-position: 0 60%;
+    background-repeat: no-repeat;
+    text-decoration: none;
+    margin-right: 4px;
+}
+
+span.balls_count a:hover {
+    color: #060;
+    background-image: url(/img/icons/balls_hover.gif);
+}
+
+span.styles_list {
+    color: #606060;
+    font-size: .9em;
+}
+
+.track .tizer {
+    padding-left: 48px;
+}
+.track .tizer {
+    font-size: 11px;
+    padding-bottom: 2px;
+    padding-top: 4px;
+    color: #909090;
+}
+
+.track .notizer, .track .subtizer {
+    padding-bottom: 2px;
+    clear: left;
+}
+
+span.bitrate, a.bitrate {
+    font-size: 1em;
+    padding: 0 2px;
+    margin-left: 4px;
+    margin-right: 6px;
+    color: #fff;
+    background-color: #6aa221;
+    text-decoration: none;
+    border-radius: 2px;
+}
+
+.radio_mini.can_hover:hover, .radio_mini.active {
+    background-image: url(/img/logos/mini_logo_color.png);
+}
+.radio_mini {
+    width: 70px;
+    height: 70px;
+    background-image: url(/img/logos/mini_logo.png);
+}
+
+.radio_fullmoon.can_hover:hover, .radio_fullmoon.active {
+    background-image: url(/img/logos/fullmoon_logo_color.png);
+}
+.radio_fullmoon {
+    width: 70px;
+    height: 70px;
+    background-image: url(/img/logos/fullmoon_logo.png);
+}
+
+.radio_channel5.can_hover:hover, .radio_channel5.active {
+    background-image: url(/img/logos/channel5_logo_color.png);
+}
+.radio_channel5 {
+    width: 70px;
+    height: 70px;
+    background-image: url(/img/logos/channel5_logo.png);
+}
+
+.radio_oldschool.can_hover:hover, .radio_channel5.active {
+    background-image: url(/img/logos/oldschool_logo_color.png);
+}
+.radio_oldschool {
+    width: 70px;
+    height: 70px;
+    background-image: url(/img/logos/oldschool_logo.png);
+}
+
+.radio_deep.can_hover:hover, .radio_channel5.active {
+    background-image: url(/img/logos/deep_logo_color.png);
+}
+.radio_deep {
+    width: 70px;
+    height: 70px;
+    background-image: url(/img/logos/deep_logo.png);
+}
+
+.radio_nu.can_hover:hover, .radio_channel5.active {
+    background-image: url(/img/logos/nu_logo_color.png);
+}
+.radio_nu {
+    width: 70px;
+    height: 70px;
+    background-image: url(/img/logos/nu_logo.png);
+}
+
+.radio_300kmh.can_hover:hover, .radio_channel5.active {
+    background-image: url(/img/logos/300kmh_logo_color.png);
+}
+.radio_300kmh {
+    width: 70px;
+    height: 70px;
+    background-image: url(/img/logos/300kmh_logo.png);
+}
+
+.radio_vata.can_hover:hover, .radio_channel5.active {
+    background-image: url(/img/logos/vata_logo_color.png);
+}
+.radio_vata {
+    width: 70px;
+    height: 70px;
+    background-image: url(/img/logos/vata_logo.png);
+}
+
+.radio_brainfck.can_hover:hover, .radio_channel5.active {
+    background-image: url(/img/logos/brainfck_logo_color.png);
+}
+.radio_brainfck {
+    width: 70px;
+    height: 70px;
+    background-image: url(/img/logos/brainfck_logo.png);
+}
+
+.radio_strange.can_hover:hover, .radio_channel5.active {
+    background-image: url(/img/logos/strange_logo_color.png);
+}
+.radio_strange {
+    width: 70px;
+    height: 70px;
+    background-image: url(/img/logos/strange_logo.png);
+}
+
+.radio_garagefm.can_hover:hover, .radio_channel5.active {
+    background-image: url(/img/logos/garagefm_logo_color.png);
+}
+.radio_garagefm {
+    width: 70px;
+    height: 70px;
+    background-image: url(/img/logos/garagefm_logo.png);
+}
+
+.radio_logo {
+    margin: 1px 1px 0;
+    display: block;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    background-size: 100% 100% !important;
+    transition: all .2s linear;
+    margin: auto;
+}
+
+.radio-station-list {
+    margin-left: 0;
+    list-style: none;
+}
+
+ul.radio-station-list:first-child{
+    padding-top: 40px;
+}
+
+ul.radio-station-list:last-child{
+    padding-bottom: 30px;
+}
+
+.radio-station-item {
+    border-bottom: 1px solid #E6E6E6;
+    margin: 5px 0px 0px 0px;
+    padding-bottom: 5px;
+}

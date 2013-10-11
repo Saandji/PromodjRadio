@@ -1,0 +1,43 @@
+<script id="radio-player-template" type="text/x-jquery-tmpl">
+<div class="row">
+    <div class="span4">
+        <div class="navbar navbar-static-top">
+            <div class="navbar-inner">
+                <a class="brand" href="#">
+                    <span class="header-logo"></span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="span4 radio-list-container"></div>
+    <div class="navbar navbar-fixed-bottom">
+        <div class="navbar-inner"></div>
+    </div>
+</div>
+</script>
+
+<script id="radio-station-template" type="text/x-jquery-tmpl">
+<div class="row">
+    <div class="span1"><span class="{{= name}} can_hover radio_logo {{if isActive}}active{{/if}}"></span></div>
+    <div class="span3">
+        <div class="track">
+            <div class="title">
+                <a class="title-href" href="{{if trackUrl}} {{= trackUrl}} {{else}}# {{/if}}">{{= trackName}}</a>&nbsp;
+                <span class="radiostamp">{{= trackTime}}</span>
+            </div>
+            <div class="icons">
+                <span class="comments_count">
+                    <a href="{{= commentsUrl}}"><span>{{= commentsCount}}</span></a>
+                </span>
+                <span class="downloads_count">
+                    <a href="{{= downloadsUrl}}">{{= downloadCount}}</a>
+                </span>
+                <span class="balls_count">PR<a href="{{= ballsUrl}}">{{= ballsCount}}</a></span>
+                <a class="bitrate" href="{{= bitrateUrl}}">{{= bitrateCount}}</a>
+            </div>
+        </div>
+    </div>
+</div>
+</script>
