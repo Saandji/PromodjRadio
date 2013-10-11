@@ -175,7 +175,7 @@ $(function () {
             this.set({
                 radioList: radioList
             });
-            _.each(this.get('radioList'), function(model) {
+            _.each(this.get('radioList').models, function(model) {
                 model.set({
                     radioModel: self
                 })
