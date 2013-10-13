@@ -6,10 +6,6 @@ body {
     width: 100%;
 }
 
-.radio-station-list {
-
-}
-
 .footer {
     height: 100%;
     clear: left;
@@ -197,7 +193,7 @@ span.bitrate, a.bitrate {
     background-image: url(/img/logos/channel5_logo.png);
 }
 
-.radio_oldschool.can_hover:hover, .radio_channel5.active {
+.radio_oldschool.can_hover:hover, .radio_oldschool.active {
     background-image: url(/img/logos/oldschool_logo_color.png);
 }
 .radio_oldschool {
@@ -206,7 +202,7 @@ span.bitrate, a.bitrate {
     background-image: url(/img/logos/oldschool_logo.png);
 }
 
-.radio_deep.can_hover:hover, .radio_channel5.active {
+.radio_deep.can_hover:hover, .radio_deep.active {
     background-image: url(/img/logos/deep_logo_color.png);
 }
 .radio_deep {
@@ -215,7 +211,7 @@ span.bitrate, a.bitrate {
     background-image: url(/img/logos/deep_logo.png);
 }
 
-.radio_nu.can_hover:hover, .radio_channel5.active {
+.radio_nu.can_hover:hover, .radio_nu.active {
     background-image: url(/img/logos/nu_logo_color.png);
 }
 .radio_nu {
@@ -224,7 +220,7 @@ span.bitrate, a.bitrate {
     background-image: url(/img/logos/nu_logo.png);
 }
 
-.radio_300kmh.can_hover:hover, .radio_channel5.active {
+.radio_300kmh.can_hover:hover, .radio_300kmh.active {
     background-image: url(/img/logos/300kmh_logo_color.png);
 }
 .radio_300kmh {
@@ -233,7 +229,7 @@ span.bitrate, a.bitrate {
     background-image: url(/img/logos/300kmh_logo.png);
 }
 
-.radio_vata.can_hover:hover, .radio_channel5.active {
+.radio_vata.can_hover:hover, .radio_vata.active {
     background-image: url(/img/logos/vata_logo_color.png);
 }
 .radio_vata {
@@ -242,7 +238,7 @@ span.bitrate, a.bitrate {
     background-image: url(/img/logos/vata_logo.png);
 }
 
-.radio_brainfck.can_hover:hover, .radio_channel5.active {
+.radio_brainfck.can_hover:hover, .radio_brainfck.active {
     background-image: url(/img/logos/brainfck_logo_color.png);
 }
 .radio_brainfck {
@@ -251,7 +247,7 @@ span.bitrate, a.bitrate {
     background-image: url(/img/logos/brainfck_logo.png);
 }
 
-.radio_strange.can_hover:hover, .radio_channel5.active {
+.radio_strange.can_hover:hover, .radio_strange.active {
     background-image: url(/img/logos/strange_logo_color.png);
 }
 .radio_strange {
@@ -260,7 +256,7 @@ span.bitrate, a.bitrate {
     background-image: url(/img/logos/strange_logo.png);
 }
 
-.radio_garagefm.can_hover:hover, .radio_channel5.active {
+.radio_garagefm.can_hover:hover, .radio_garagefm.active {
     background-image: url(/img/logos/garagefm_logo_color.png);
 }
 .radio_garagefm {
@@ -283,6 +279,7 @@ span.bitrate, a.bitrate {
 .radio-station-list {
     margin-left: 0;
     list-style: none;
+    overflow-y: scroll;
 }
 
 ul.radio-station-list:first-child{
@@ -297,4 +294,61 @@ ul.radio-station-list:last-child{
     border-bottom: 1px solid #E6E6E6;
     margin: 5px 0px 0px 0px;
     padding-bottom: 5px;
+}
+
+img.logo-img {
+    border-radius: 4px;
+    width: 101px;
+    height: 25px;
+}
+
+.loader-container {
+    float: left;
+    height: 25px;
+    width: 93px;
+    margin: 13px 0px 0px 20px;
+}
+
+.loader-1 {
+    width: 17px;
+    height: 10px;
+}
+
+.loader-2 {
+    width: 17px;
+    height: 10px;
+    margin: 0px 0px 0px -3px;
+}
+
+.loader-3 {
+    width: 17px;
+    height: 10px;
+    margin-left: -3px;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+.volume-container {
+    height: 36px;
+    width: 100px;
+    display: inline-block;
+}
+
+.volume {
+    width: 200px;
+    margin-left: 50px;
+    margin-top: 15px;
+}
+
+.ui-slider-range {
+    background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0.03, rgb(133,133,133)),
+        color-stop(0.52, rgb(204,204,204)),
+        color-stop(0.76, rgb(227,227,227))
+    );
 }

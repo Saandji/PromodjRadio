@@ -5,8 +5,11 @@ $(function () {
     };
 
     var setLocalStorageItem = function(key, value) {
-        localStorage.removeItem(key);
         localStorage.setItem(key, value);
+    };
+
+    var removeLocalStorageItem = function(key) {
+        localStorage.removeItem(key);
     };
 
     var isPaused = function() {
@@ -18,7 +21,7 @@ $(function () {
         /**
          * specify next fields:
          *
-         * radioId - radio identifier
+         * id - radio identifier
          * stream - radio stream src
          * name -  radio name to display
          *
@@ -31,13 +34,13 @@ $(function () {
             },
             {
                 id: 1,
-                name: 'fullmoon',
-                stream: "http://radio.maases.com:8000/fullmoon-192"
+                name: 'nu',
+                stream: "http://radio.maases.com:8000/nu-192"
             },
             {
                 id: 2,
-                name: 'nu',
-                stream: "http://radio.maases.com:8000/nu-192"
+                name: 'fullmoon',
+                stream: "http://radio.maases.com:8000/fullmoon-192"
             },
             {
                 id: 3,
@@ -91,26 +94,12 @@ $(function () {
             id: null,
             stream: null,
             name: null,
-            audioElement: null,
             connecting: false,
-            songUpdateIntervalId: 0,
-            checkConnectedId: null,
-            trackName: "",
-            trackUrl: null,
-            commentsCount: "",
-            commentsUrl: null,
-            downloadCount: "",
-            downloadUrl: null,
-            ballsCount: "",
-            ballsUrl: null,
-            bitRate: "",
-            biyRateUrl: null,
-            trackTime: "",
             trackHtml: ""
         },
 
         initialize: function() {
-            this.set({isActive: getLocalStorageItem('activeStationId') == this.get('id') && isPaused()});
+            this.set({isActive: getLocalStorageItem('activeStationId') == this.get('id') && !isPaused()});
         }
     });
 
@@ -128,11 +117,29 @@ $(function () {
         },
 
         onLogoClicked: function (e) {
-            this.model.set({
-                isActive: true
-            });
-            setLocalStorageItem('activeStationId', this.model.get('id'));
-            this.model.get('radioModel').start(this.model.get('stream'));
+            if (isPaused()) {
+                if (!this.model.get('isActive')) {
+                    this.model.set({
+                        isActive: true
+                    });
+                    setLocalStorageItem('activeStationId', this.model.get('id'));
+                    this.model.get('radioModel').start(this.model.get('stream'));
+                }
+            } else {
+                if (this.model.get('isActive')) {
+                    this.model.set({
+                        isActive: false
+                    });
+                    removeLocalStorageItem('activeStationId');
+                    this.model.get('radioModel').stop();
+                } else {
+                    this.model.set({
+                        isActive: true
+                    });
+                    this.model.get('radioModel').start(this.model.get('stream'), getLocalStorageItem('activeStationId'));
+                    setLocalStorageItem('activeStationId', this.model.get('id'));
+                }
+            }
         },
 
         afterRender: function() {
@@ -168,6 +175,10 @@ $(function () {
 
     var RadioModel = BaseModel.extend({
 
+        defaults: {
+            connecting: false
+        },
+
         initialize: function () {
             var self = this;
             var activeStationId = getLocalStorageItem('activeStationId');
@@ -186,7 +197,10 @@ $(function () {
             return chrome.extension.getBackgroundPage().document.querySelector('audio');
         },
 
-        start: function (stream) {
+        start: function (stream, oldStationId) {
+            if (oldStationId) {
+                this.get('radioList').at(oldStationId).set({isActive: false});
+            }
             var self = this;
             this.connect(stream);
             this.getAudioElement().addEventListener('error', this.connect);
@@ -209,8 +223,12 @@ $(function () {
             this.getAudioElement().removeEventListener('error', this.connect, false);
             this.getAudioElement().src = null;
             this.set({
-                isPaused: isPaused()
+                isPaused: isPaused(),
+                connecting: false
             });
+            if (this.get('checkConnectedId')) {
+                clearInterval(this.get('checkConnectedId'));
+            }
         },
 
         getCurrentTime: function () {
@@ -221,17 +239,25 @@ $(function () {
             var self = this;
             $.ajax({
                 url: 'http://promodj.com/ajax/radio2_playlist.html',
-                digest: 'digest=1894188:~cf0636b2aafc95faa4aecf20c7df5997',
-                channelID: 11,
-
+                data: {
+                    digest: 'digest=1894188:~cf0636b2aafc95faa4aecf20c7df5997',
+                    channelID: 11
+                },
+                timeout: 5000,
                 success: function(response) {
                     self.parseResponse(response, options);
+                },
+
+                error: function(response) {
+                    options.error(response);
                 }
             });
         },
 
         connect: function (stream) {
-            this.getAudioElement().src = stream;
+            if (stream) {
+                this.getAudioElement().src = stream;
+            }
             this.getAudioElement().play();
         },
 
@@ -239,22 +265,6 @@ $(function () {
             var xhr = new XMLHttpRequest();
             xhr.open(method, url, async);
             return xhr;
-        },
-
-        downloadTrackInfo: function () {
-            var self = this;
-            if (this.get('domain') != "") {
-                var request = this.XHRequest("get", this.get('domain'), true);
-                request.onreadystatechange = function () {
-                    if (request.readyState === 4 && request.status === 200) {
-                        self.parseResponse(request.responseText);
-                    }
-                };
-                request.send();
-            } else {
-                window.clearInterval(this.get('songUpdateIntervalId'));
-                $('.covered-container').css('background-image', "url(" + this.get('bigLogoImageUrl') + ")");
-            }
         },
 
         parseResponse: function (responseText, options) {
@@ -268,54 +278,21 @@ $(function () {
             }
         },
 
-        compareTrackInfo: function (artist, song) {
-            if (this.get('artist') != artist && this.get('song') != song) {
-                this.set({
-                    artist: artist,
-                    song: song
-                });
-                this.downloadCover("track", 3, escape(artist.replace(/\s/g, '+')), escape(song.replace(/\s/g, '+')));
-            }
-        },
-
-        downloadCover: function (coverType, size, artist, song) {
-            var self = this;
-            var url = 'http://ws.audioscrobbler.com/2.0/?method=' + coverType + '.getinfo&api_key=' + this.get('apiKey') + '&artist=' + artist + '&track=' + song;
-            var request = this.XHRequest("get", url, false);
-            request.onload = function () {
-                self.saveCoverUrl(request.responseXML, coverType, size, artist, song);
-            };
-            request.send();
-        },
-
-        saveCoverUrl: function (coverXML, coverType, size, artist, song) {
-            if (coverXML) {
-                var coverTag = coverXML.getElementsByTagName("image")[size];
-                if (coverTag && coverTag.textContent) {
-                    this.set({
-                        cover: coverTag.textContent
-                    });
-                } else if (coverType == 'track') {
-                    this.downloadCover('artist', 3, artist, song);
-                } else {
-                    this.set({
-                        cover: null
-                    });
-                }
-            }
-        },
-
         checkConnected: function () {
             var self = this;
-            if (this.isPaused()) {
+            if (isPaused()) {
                 clearInterval(self.get('checkConnectedId'));
             } else {
                 if (self.getCurrentTime() == 0) {
+                    var cnt = self.get('checksCount') || 0;
                     self.set({
+                        checkCount: cnt++,
                         connecting: true
                     });
+                    if (cnt > 5) {
+                        self.getAudioElement().play();
+                    }
                 } else {
-                    //self.downloadTrackInfo();
                     clearInterval(self.get('checkConnectedId'));
                     self.set({
                         connecting: false
@@ -340,13 +317,16 @@ $(function () {
         afterRender: function() {
             this.initVolumeSlider();
             $('a').click(function(){
-                chrome.tabs.create({url: $(this).attr('href')});
+                var href = $(this).attr('href');
+                if (href != '#') {
+                    chrome.tabs.create({url: href});
+                }
                 return false;
             });
         },
 
         initVolumeSlider: function () {
-            var volume = getLocalStorageItem('volume') ? getLocalStorageItem('volume') : 0.7;
+            var volume = getLocalStorageItem('volume') || 0.7;
             var $slider = $(".volume");
             this.initSlider($slider, this.model.get('isPaused'), volume);
         },
@@ -360,11 +340,12 @@ $(function () {
                 max: 100,
                 slide: function (event, ui) {
                     self.model.getAudioElement().volume = (ui.value / 100);
-                    setLocalStorageItem(ui.volume / 100);
+                    setLocalStorageItem('volume', ui.value / 100);
                 }
             });
         }
     });
+
     var player;
     radioModel.prefetch({
         success: function (result) {
@@ -378,16 +359,10 @@ $(function () {
                 console.log('Ошибка отрисовки страницы');
                 console.log(ex);
             }
+        },
+        error: function(result) {
+            //create error View here ^)
         }
     });
 
-//    var player = new RadioView({
-//        model: radioModel
-//    });
-//    radioModel.trigger('change');
 });
-
-//http://stream04.media.rambler.ru/megapolis128.mp3
-
-
-

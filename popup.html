@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <link href="css/bootstrap.css" rel="stylesheet" media="screen">
-    <link href="css/popup.css" rel="stylesheet" media="screen">
     <link href="css/jquery-ui-1.10.3.custom.css" rel="stylesheet" type="text/css" />
+    <link href="css/popup.css" rel="stylesheet" media="screen">
     <script type="text/javascript" src="js/libs/jquery-1.10.2.js"></script>
     <script type="text/javascript" src="/js/libs/jquery-ui-1.10.3.custom.min.js"></script>
     <script type="text/javascript" src="/js/libs/jquery.tmpl.min.js"></script>
@@ -21,9 +21,19 @@
             <div class="span4">
                 <div class="navbar navbar-fixed-top">
                     <div class="navbar-inner">
-                        <a class="brand" href="#">
-                            <span class="header-logo"></span>
-                        </a>
+                        <div class="container">
+                            <div class="loader-container">
+                                <div class="hide-container" {{if !connecting}} style="display:none" {{/if}}>
+                                    <img src="img/defaults/preloader_10.gif" class="loader-1">
+                                    <img src="img/defaults/preloader_10.gif" class="loader-2">
+                                    <img src="img/defaults/preloader_10.gif" class="loader-3">
+                                </div>
+                            </div>
+                            <a class="brand" href="http://promodj.com">
+                                <img class="logo-img" src="img/logos/logo_small.gif">
+                            </a>
+                            <div class="long-loader"> </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -31,7 +41,9 @@
         <div class="row">
             <div class="span4 radio-list-container"></div>
             <div class="navbar navbar-fixed-bottom">
-                <div class="navbar-inner"></div>
+                <div class="navbar-inner">
+                    <div class="volume"></div>
+                </div>
             </div>
         </div>
     </script>
