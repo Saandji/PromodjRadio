@@ -29,56 +29,101 @@ $(function () {
          */
             {
                 id: 0,
+                name: 'top100',
+                stream: "http://radio.maases.com:8000/top100-192"
+            },
+            {
+                id: 1,
                 name: 'channel5',
                 stream: "http://radio.maases.com:8000/channel5-192"
             },
             {
-                id: 1,
+                id: 2,
+                name: 'klubb',
+                stream: "http://radio.maases.com:8000/klubb-192"
+            },
+            {
+                id: 3,
+                name: 'dubstep',
+                stream: "http://radio.maases.com:8000/dubstep-192"
+            },
+            {
+                id: 4,
+                name: 'pop',
+                stream: "http://radio.maases.com:8000/pop-192"
+            },
+            {
+                id: 5,
                 name: 'nu',
                 stream: "http://radio.maases.com:8000/nu-192"
             },
             {
-                id: 2,
+                id: 6,
+                name: 'toonu',
+                stream: "http://radio.maases.com:8000/toonu-192"
+            },
+            {
+                id: 7,
+                name: 'yo',
+                stream: "http://radio.maases.com:8000/yo-192"
+            },
+            {
+                id: 8,
                 name: 'fullmoon',
                 stream: "http://radio.maases.com:8000/fullmoon-192"
             },
             {
-                id: 3,
-                name: 'deep',
-                stream: "http://radio.maases.com:8000/deep-192"
+                id: 9,
+                name: 'bobina',
+                stream: "http://radio.maases.com:8000/bobina-192"
             },
             {
-                id: 4,
+                id: 10,
                 name: '300kmh',
                 stream: "http://radio.maases.com:8000/300kmh-192"
             },
             {
-                id: 5,
+                id: 11,
+                name: '186mph',
+                stream: "http://radio.maases.com:8000/186mph-192"
+            },
+            {
+                id: 12,
+                name: 'deep',
+                stream: "http://radio.maases.com:8000/deep-192"
+            },
+            {
+                id: 13,
+                name: 'toodeep',
+                stream: "http://radio.maases.com:8000/toodeep-192"
+            },
+            {
+                id: 14,
                 name: 'mini',
                 stream: "http://radio.maases.com:8000/mini-192"
             },
             {
-                id: 6,
+                id: 15,
                 name: 'oldschool',
                 stream: "http://radio.maases.com:8000/oldschool-192"
             },
             {
-                id: 7,
+                id: 16,
                 name: 'vata',
                 stream: "http://radio.maases.com:8000/vata-192"
             },
             {
-                id: 8,
+                id: 17,
                 name: 'brainfck',
                 stream: "http://radio.maases.com:8000/brainfck-192"
             },
             {
-                id: 9,
+                id: 18,
                 name: 'strange',
                 stream: "http://radio.maases.com:8000/strange-192"
             },
             {
-                id: 10,
+                id: 19,
                 name: 'garagefm',
                 stream: "http://radio.maases.com:8000/garagefm-192"
             }
@@ -323,6 +368,10 @@ $(function () {
                 }
                 return false;
             });
+            var activeStation = $(this.el).find('.active');
+            if (activeStation.length > 0) {
+                $('html, body').animate({scrollTop: $('.active').offset().top}, 'slow');
+            }
         },
 
         initVolumeSlider: function () {

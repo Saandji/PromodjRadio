@@ -256,6 +256,87 @@ span.bitrate, a.bitrate {
     background-image: url(/img/logos/strange_logo.png);
 }
 
+.radio_186mph.can_hover:hover, .radio_186mph.active {
+    background-image: url(/img/logos/186mph_logo_color.png);
+}
+.radio_186mph {
+    width: 70px;
+    height: 70px;
+    background-image: url(/img/logos/186mph_logo.png);
+}
+
+.radio_bobina.can_hover:hover, .radio_bobina.active {
+    background-image: url(/img/logos/bobina_logo_color.png);
+}
+.radio_bobina {
+    width: 70px;
+    height: 70px;
+    background-image: url(/img/logos/bobina_logo.png);
+}
+
+.radio_dubstep.can_hover:hover, .radio_dubstep.active {
+    background-image: url(/img/logos/dubstep_logo_color.png);
+}
+.radio_dubstep {
+    width: 70px;
+    height: 70px;
+    background-image: url(/img/logos/dubstep_logo.png);
+}
+
+.radio_klubb.can_hover:hover, .radio_klubb.active {
+    background-image: url(/img/logos/klubb_logo_color.png);
+}
+.radio_klubb {
+    width: 70px;
+    height: 70px;
+    background-image: url(/img/logos/klubb_logo.png);
+}
+
+.radio_pop.can_hover:hover, .radio_pop.active {
+    background-image: url(/img/logos/pop_logo_color.png);
+}
+.radio_pop {
+    width: 70px;
+    height: 70px;
+    background-image: url(/img/logos/pop_logo.png);
+}
+
+.radio_toodeep.can_hover:hover, .radio_toodeep.active {
+    background-image: url(/img/logos/toodeep_logo_color.png);
+}
+.radio_toodeep {
+    width: 70px;
+    height: 70px;
+    background-image: url(/img/logos/toodeep_logo.png);
+}
+
+.radio_toonu.can_hover:hover, .radio_toonu.active {
+    background-image: url(/img/logos/toonu_logo_color.png);
+}
+.radio_toonu {
+    width: 70px;
+    height: 70px;
+    background-image: url(/img/logos/toonu_logo.png);
+}
+
+.radio_top100.can_hover:hover, .radio_top100.active {
+    background-image: url(/img/logos/top100_logo_color.png);
+}
+.radio_top100 {
+    width: 70px;
+    height: 70px;
+    background-image: url(/img/logos/top100_logo.png);
+}
+
+.radio_yo.can_hover:hover, .radio_yo.active {
+    background-image: url(/img/logos/yo_logo_color.png);
+}
+.radio_yo {
+    width: 70px;
+    height: 70px;
+    background-image: url(/img/logos/yo_logo.png);
+}
+
 .radio_garagefm.can_hover:hover, .radio_garagefm.active {
     background-image: url(/img/logos/garagefm_logo_color.png);
 }
@@ -264,6 +345,7 @@ span.bitrate, a.bitrate {
     height: 70px;
     background-image: url(/img/logos/garagefm_logo.png);
 }
+
 
 .radio_logo {
     margin: 1px 1px 0;

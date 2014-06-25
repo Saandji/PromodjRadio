@@ -1,6 +1,6 @@
 {
     "name": "Promodj Radio extension",
-    "version": "1.0",
+    "version": "2.0",
     "description": "",
     "manifest_version": 2,
 
@@ -11,7 +11,7 @@
     ],
     "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
 
-    "browser_action": { // Browser elements
+    "browser_action": {
         "default_title": "Hubble",
         "default_icon": "img/defaults/favicon.ico",
         "default_popup": "popup.html"
