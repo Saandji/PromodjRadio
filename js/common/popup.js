@@ -368,14 +368,21 @@ $(function () {
                 }
                 return false;
             });
+            this.scrollToActive();
+        },
+
+        scrollToActive: function() {
             var activeStation = $(this.el).find('.active');
-            if (activeStation.length > 0) {
-                $('html, body').animate({scrollTop: $('.active').offset().top}, 'slow');
+            if (activeStation.length > 0 && !this.model.get('connecting')) {
+                $('html, body').animate({scrollTop: $('.active').offset().top - 50}, 'slow');
             }
         },
 
         initVolumeSlider: function () {
-            var volume = getLocalStorageItem('volume') || 0.7;
+            if (getLocalStorageItem('volume') != this.model.getAudioElement().volume) {
+                this.model.getAudioElement().volume = getLocalStorageItem('volume');
+            }
+            var volume = this.model.getAudioElement().volume;
             var $slider = $(".volume");
             this.initSlider($slider, this.model.get('isPaused'), volume);
         },
@@ -388,6 +395,7 @@ $(function () {
                 min: 0,
                 max: 100,
                 slide: function (event, ui) {
+                    console.log(self.model.getAudioElement().volume);
                     self.model.getAudioElement().volume = (ui.value / 100);
                     setLocalStorageItem('volume', ui.value / 100);
                 }
