@@ -30,102 +30,153 @@ $(function () {
             {
                 id: 0,
                 name: 'top100',
+                channelID: 21,
                 stream: "http://radio.maases.com:8000/top100-192"
             },
             {
                 id: 1,
                 name: 'channel5',
+                channelID: 1,
                 stream: "http://radio.maases.com:8000/channel5-192"
             },
             {
                 id: 2,
                 name: 'klubb',
+                channelID: 15,
                 stream: "http://radio.maases.com:8000/klubb-192"
             },
             {
                 id: 3,
                 name: 'dubstep',
+                channelID: 20,
                 stream: "http://radio.maases.com:8000/dubstep-192"
             },
             {
                 id: 4,
                 name: 'pop',
+                channelID: 19,
                 stream: "http://radio.maases.com:8000/pop-192"
             },
             {
                 id: 5,
                 name: 'nu',
+                channelID: 14,
                 stream: "http://radio.maases.com:8000/nu-192"
             },
             {
                 id: 6,
                 name: 'toonu',
+                channelID: 16,
                 stream: "http://radio.maases.com:8000/toonu-192"
             },
             {
                 id: 7,
                 name: 'yo',
+                channelID: 13,
                 stream: "http://radio.maases.com:8000/yo-192"
             },
             {
                 id: 8,
                 name: 'fullmoon',
+                channelID: 4,
                 stream: "http://radio.maases.com:8000/fullmoon-192"
             },
             {
                 id: 9,
                 name: 'bobina',
+                channelID: 22,
                 stream: "http://radio.maases.com:8000/bobina-192"
             },
             {
                 id: 10,
                 name: '300kmh',
+                channelID: 3,
                 stream: "http://radio.maases.com:8000/300kmh-192"
             },
             {
                 id: 11,
                 name: '186mph',
+                channelID: 18,
                 stream: "http://radio.maases.com:8000/186mph-192"
             },
             {
                 id: 12,
                 name: 'deep',
+                channelID: 2,
                 stream: "http://radio.maases.com:8000/deep-192"
             },
             {
                 id: 13,
                 name: 'toodeep',
+                channelID: 17,
                 stream: "http://radio.maases.com:8000/toodeep-192"
             },
             {
                 id: 14,
                 name: 'mini',
+                channelID: 5,
                 stream: "http://radio.maases.com:8000/mini-192"
             },
             {
                 id: 15,
                 name: 'oldschool',
+                channelID: 6,
                 stream: "http://radio.maases.com:8000/oldschool-192"
             },
             {
                 id: 16,
                 name: 'vata',
+                channelID: 7,
                 stream: "http://radio.maases.com:8000/vata-192"
             },
             {
                 id: 17,
-                name: 'brainfck',
-                stream: "http://radio.maases.com:8000/brainfck-192"
+                name: 'strange',
+                channelID: 9,
+                stream: "http://radio.maases.com:8000/strange-192"
             },
             {
                 id: 18,
-                name: 'strange',
-                stream: "http://radio.maases.com:8000/strange-192"
+                name: 'brainfck',
+                channelID: 8,
+                stream: "http://radio.maases.com:8000/brainfck-192"
             },
             {
                 id: 19,
                 name: 'garagefm',
+                channelID: 11,
                 stream: "http://radio.maases.com:8000/garagefm-192"
+            },
+            {
+                id: 20,
+                name: 'mixadancefm',
+                channelID: 23,
+                stream: "http://radio.maases.com:8000/mixadancefm-192"
+            },
+            {
+                id: 21,
+                name: 'pioneerdj',
+                channelID: 24,
+                stream: "http://radio.maases.com:8000/pioneerdj-192"
+            },
+            {
+                id: 22,
+                name: 'vanillaninja',
+                channelID: 29,
+                stream: "http://radio.maases.com:8000/vanillaninja-192"
+            },
+
+            {
+                id: 23,
+                name: 'groove',
+                channelID: 25,
+                stream: "http://radio.maases.com:8000/groove-192"
+            },
+            {
+                id: 24,
+                name: 'pacha',
+                channelID: 26,
+                stream: "http://radio.maases.com:8000/pacha-192"
             }
         ];
     };
@@ -140,11 +191,46 @@ $(function () {
             stream: null,
             name: null,
             connecting: false,
-            trackHtml: ""
+            trackHtml: "",
+            isLoaded: false,
+            isActive: false
         },
 
         initialize: function() {
-            this.set({isActive: getLocalStorageItem('activeStationId') == this.get('id') && !isPaused()});
+            var id = this.get('id');
+            var isActive = getLocalStorageItem('activeStationId') == id && !isPaused();
+
+            if (isActive && (id < 19)) {
+                this.loadTrackInfo();
+            }
+            this.set({
+                isActive: isActive,
+                isLoaded: isActive
+            });
+        },
+
+        loadTrackInfo: function() {
+            var self = this;
+            $.ajax({
+                url: 'http://promodj.com/ajax/radio2_playlist.html',
+                data: {
+                    digest: 'digest=1894188:~cf0636b2aafc95faa4aecf20c7df5997',
+                    channelID: self.get('channelID')
+                },
+                timeout: 5000,
+                success: function(response) {
+                    self.parseResponse(response);
+                }
+            });
+        },
+
+        parseResponse: function (responseText, options, trackId) {
+            if (responseText) {
+                this.set({
+                    trackHtml: $(responseText).find('.track')[0],
+                    isLoaded: true
+                });
+            }
         }
     });
 
@@ -164,6 +250,9 @@ $(function () {
         onLogoClicked: function (e) {
             if (isPaused()) {
                 if (!this.model.get('isActive')) {
+                    if (this.model.get('id') < 19) {
+                        this.model.loadTrackInfo();
+                    }
                     this.model.set({
                         isActive: true
                     });
@@ -173,11 +262,15 @@ $(function () {
             } else {
                 if (this.model.get('isActive')) {
                     this.model.set({
-                        isActive: false
+                        isActive: false,
+                        isLoaded: false
                     });
                     removeLocalStorageItem('activeStationId');
                     this.model.get('radioModel').stop();
                 } else {
+                    if (this.model.get('id') < 19) {
+                        this.model.loadTrackInfo();
+                    }
                     this.model.set({
                         isActive: true
                     });
@@ -244,7 +337,10 @@ $(function () {
 
         start: function (stream, oldStationId) {
             if (oldStationId) {
-                this.get('radioList').at(oldStationId).set({isActive: false});
+                this.get('radioList').at(oldStationId).set({
+                    isActive: false,
+                    isLoaded: false
+                });
             }
             var self = this;
             this.connect(stream);
@@ -281,22 +377,7 @@ $(function () {
         },
 
         prefetch: function(options) {
-            var self = this;
-            $.ajax({
-                url: 'http://promodj.com/ajax/radio2_playlist.html',
-                data: {
-                    digest: 'digest=1894188:~cf0636b2aafc95faa4aecf20c7df5997',
-                    channelID: 11
-                },
-                timeout: 5000,
-                success: function(response) {
-                    self.parseResponse(response, options);
-                },
-
-                error: function(response) {
-                    options.error(response);
-                }
-            });
+            options.success();
         },
 
         connect: function (stream) {
@@ -310,17 +391,6 @@ $(function () {
             var xhr = new XMLHttpRequest();
             xhr.open(method, url, async);
             return xhr;
-        },
-
-        parseResponse: function (responseText, options) {
-            if (responseText) {
-                for (var i = 0; i < getDefaultRadioStations().length - 1; i++) {
-                    this.get('radioList').at(i).set({trackHtml: $(responseText).find('.track')[i]});
-                }
-                if (_.isFunction(options.success)) {
-                    options.success();
-                }
-            }
         },
 
         checkConnected: function () {
@@ -379,8 +449,9 @@ $(function () {
         },
 
         initVolumeSlider: function () {
-            if (getLocalStorageItem('volume') != this.model.getAudioElement().volume) {
-                this.model.getAudioElement().volume = getLocalStorageItem('volume');
+            var storageVolume = getLocalStorageItem('volume');
+            if (storageVolume != this.model.getAudioElement().volume) {
+                this.model.getAudioElement().volume = getLocalStorageItem('volume') == null ? 0.3 : storageVolume;
             }
             var volume = this.model.getAudioElement().volume;
             var $slider = $(".volume");
@@ -395,7 +466,6 @@ $(function () {
                 min: 0,
                 max: 100,
                 slide: function (event, ui) {
-                    console.log(self.model.getAudioElement().volume);
                     self.model.getAudioElement().volume = (ui.value / 100);
                     setLocalStorageItem('volume', ui.value / 100);
                 }

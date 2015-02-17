@@ -21,6 +21,7 @@
 <script id="radio-station-template" type="text/x-jquery-tmpl">
 <div class="row">
     <div class="span1"><span class="{{= name}} can_hover radio_logo {{if isActive}}active{{/if}}"></span></div>
+    {{if isLoaded}}
     <div class="span3">
         <div class="track">
             <div class="title">
@@ -39,5 +40,6 @@
             </div>
         </div>
     </div>
+    {[/if}}
 </div>
 </script>

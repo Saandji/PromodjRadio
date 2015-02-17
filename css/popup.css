@@ -339,6 +339,7 @@ span.bitrate, a.bitrate {
 
 .radio_garagefm.can_hover:hover, .radio_garagefm.active {
     background-image: url(/img/logos/garagefm_logo_color.png);
+    margin-left: 115px!important;
 }
 .radio_garagefm {
     width: 70px;
@@ -346,6 +347,58 @@ span.bitrate, a.bitrate {
     background-image: url(/img/logos/garagefm_logo.png);
 }
 
+.radio_mixadancefm.can_hover:hover, .radio_mixadancefm.active {
+    background-image: url(/img/logos/mixadance_logo_color.png);
+    margin-left: 115px!important;
+}
+.radio_mixadancefm {
+    width: 70px;
+    height: 70px;
+    background-image: url(/img/logos/mixadance_logo.png);
+}
+
+.radio_pioneerdj.can_hover:hover, .radio_pioneerdj.active {
+    background-image: url(/img/logos/pioneer_logo_color.png);
+    margin-left: 115px!important;
+}
+.radio_pioneerdj {
+    width: 70px;
+    height: 70px;
+    background-image: url(/img/logos/pioneer_logo.png);
+}
+
+.radio_groove {
+    width: 70px;
+    height: 70px;
+    background-image: url(/img/logos/groove_logo.png);
+}
+
+.radio_groove.can_hover:hover, .radio_groove.active {
+    background-image: url(/img/logos/groove_logo_color.png);
+    margin-left: 115px!important;
+}
+
+.radio_vanillaninja {
+    width: 70px;
+    height: 70px;
+    background-image: url(/img/logos/vanillaninja_logo.png);
+}
+
+.radio_vanillaninja.can_hover:hover, .radio_vanillaninja.active {
+    background-image: url(/img/logos/vanillaninja_logo_color.png);
+    margin-left: 115px!important;
+}
+
+.radio_pacha {
+    width: 70px;
+    height: 70px;
+    background-image: url(/img/logos/pacha_logo.png);
+}
+
+.radio_pacha.can_hover:hover, .radio_pacha.active {
+    background-image: url(/img/logos/pacha_logo_color.png);
+    margin-left: 115px!important;
+}
 
 .radio_logo {
     margin: 1px 1px 0;
@@ -354,8 +407,11 @@ span.bitrate, a.bitrate {
     position: relative;
     overflow: hidden;
     background-size: 100% 100% !important;
-    transition: all .2s linear;
-    margin: auto;
+    margin-left: 115px;
+}
+
+.radio_logo.active {
+    margin-left: 0px;
 }
 
 .radio-station-list {
