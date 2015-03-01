@@ -196,20 +196,41 @@ $(function () {
             isActive: false
         },
 
-        initialize: function() {
-            var id = this.get('id');
-            var isActive = getLocalStorageItem('activeStationId') == id && !isPaused();
-
-            if (isActive && (id < 19)) {
-                this.loadTrackInfo();
-            }
-            this.set({
-                isActive: isActive,
-                isLoaded: isActive
-            });
+        fetch: function(options) {
+           this.dsada(options);
         },
 
-        loadTrackInfo: function() {
+        dsada: function (options) {
+            var self = this;
+            var id = this.get('id');
+            var isActive = getLocalStorageItem('activeStationId') == id && !isPaused();
+            var myOptions = {
+                success: function(response) {
+                    self.set({
+                        isLoaded: isActive,
+                        isActive: isActive
+                    });
+                    if (options.success) {
+                        options.success();
+                    }
+                }
+            };
+
+
+            if (isActive && (id < 19)) {
+                this.loadTrackInfo(myOptions);
+            } else {
+                self.set({
+                    isLoaded: isActive,
+                    isActive: isActive
+                });
+                if (options.success) {
+                    options.success();
+                }
+            }
+        },
+
+        loadTrackInfo: function(options) {
             var self = this;
             $.ajax({
                 url: 'http://promodj.com/ajax/radio2_playlist.html',
@@ -219,6 +240,9 @@ $(function () {
                 },
                 timeout: 5000,
                 success: function(response) {
+                    if (options && options.success) {
+                        options.success();
+                    }
                     self.parseResponse(response);
                 }
             });
@@ -325,9 +349,14 @@ $(function () {
                 radioList: radioList
             });
             _.each(this.get('radioList').models, function(model) {
-                model.set({
-                    radioModel: self
-                })
+                var myOptions = {
+                    success: function(reponse) {
+                        model.set({
+                            radioModel: self
+                        });
+                    }
+                }
+                model.fetch(myOptions);
             });
         },
 

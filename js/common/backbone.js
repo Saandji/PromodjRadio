@@ -8,6 +8,10 @@
 
 var BaseModel = Backbone.Model.extend({
 
+    initialize: function (options) {
+        Backbone.Model.prototype.initialize.call(this, options);
+    },
+
     /**
      * Default options that will be send with each fetch request (i.e. dataType)
      */
@@ -35,6 +39,267 @@ var BaseModel = Backbone.Model.extend({
     fetch: function (options) {
         options = _.extend({}, this.fetchOptions, options);
         return Backbone.Model.prototype.fetch.call(this, options);
+    },
+
+    /**
+     * Executes multiple functions in parallel.
+     * These functions has the same signature --
+     * they accept "options" parameter with two
+     * callbacks:
+     * 'success' - called if request has succeed
+     * 'error' - called if request has failed.
+     *
+     * This method executes all requests in parallel, waiting for all
+     * of them to succeed. Then it calls options.success or options.error
+     * depending on result.
+     *
+     * @param functions
+     * @param options
+     */
+    parallel: function (params, options) {
+        var parallelStatus = 0;
+        var length = params.length;
+        var self = this;
+
+        var funcOptions = {
+            success: function () {
+                parallelStatus += 1;
+                if (parallelStatus === length) {
+                    if (options && options.success) {
+                        options.success(self);
+                    }
+                }
+            },
+            error: function () {
+                if (options && options.error) {
+                    options.error(self);
+                }
+            },
+            // ugly hach to create GET url query with parameters
+            data: options ? options.data : null
+        };
+
+        _(params).each(function (param) {
+            if (_.isFunction(param)) {
+                param(funcOptions);
+            } else {
+
+                if (param instanceof BaseCollection) {
+                    param.load(funcOptions);
+                } else {
+                    param.fetch(funcOptions);
+                }
+            }
+        });
+    }
+});
+
+/**
+ * Base class for all collections.
+ * Pass different options in the constructor to change it's
+ * behaviour.
+ */
+var BaseCollection = Backbone.Collection.extend({
+
+    snapshotDefaults: {
+        offset: 0,
+        limit: 150,
+        url: null
+    },
+
+    /**
+     * Default values for the collection attributes
+     */
+    defaults: {
+        offset: 0,
+        limit: 20,
+        url: null
+    },
+
+    /**
+     * Default data that will be sent with each fetch request
+     */
+    data: {},
+
+    /**
+     * Default options that will be send with each fetch request (i.e. dataType)
+     */
+    fetchOptions: {},
+
+    /**
+     * True if collection has been completely loaded from the server
+     */
+    allLoaded: false,
+
+    /**
+     * Default class for this collection's models
+     */
+    model: BaseModel,
+
+    /**
+     * Collection instance constructor
+     *
+     * @param offset Overrides default offset for fetching
+     * @param limit Overrides default limit for fetching
+     * @param url Url to be used in fetch method
+     */
+    initialize: function (models, options) {
+        if (navigator.userAgent == 'planeta-snapshot-bot') {
+            if (options && options.limit) {
+                delete options.limit;
+            }
+            this.defaults = this.snapshotDefaults;
+        }
+        if (!options) {
+            this.offset = this.offset || this.defaults.offset;
+            this.limit = this.limit || this.defaults.limit;
+            this.url = this.url || this.defaults.url;
+        } else {
+            this.offset = options.offset || this.offset || this.defaults.offset;
+            this.limit = options.limit || this.limit || this.defaults.limit;
+            this.url = options.url || this.url || this.defaults.url;
+            if (options.data) {
+                this.data = options.data;
+            }
+        }
+    },
+
+    appendChildViews: function (dfd) {
+        var self = this;
+        if (this.collection && this.collection.loadDfd) {
+            this.collection.loadDfd.always(function () {
+                BaseView.prototype.appendChildViews.apply(self, arguments);
+            });
+        } else {
+            BaseView.prototype.appendChildViews.apply(self, arguments);
+        }
+    },
+
+    /**
+     * Fetches collection from the server.
+     *
+     * @param options
+     */
+    fetch: function (options) {
+        options = _.extend({}, this.fetchOptions, options);
+        return Backbone.Collection.prototype.fetch.call(this, options);
+    },
+
+    onLoadSuccess: function () {
+        // override it
+    },
+
+    /**
+     * Reloads collection from the server.
+     * Fires 'reset' event.
+     */
+    load: function (options) {
+        var loadNext = (options && options.loadNext) ? true : false;
+        if (!loadNext) {
+            this.offset = this.defaults.offset;
+            this.allLoaded = false;
+        }
+
+        var fetchData = _.clone(this.data);
+        if ($.isEmptyObject(fetchData) && options) {
+            fetchData = _.extend({}, options.data);
+        }
+        fetchData.offset = this.offset;
+        fetchData.limit = this.limit;
+
+        var self = this;
+        var successCallback = options && options.success ? options.success : null;
+        var errorCallback = options && options.error ? options.error : null;
+        options = _.extend({}, options, {
+            add: loadNext,
+            data: fetchData,
+            success: function (collection, response) {
+                // Setting new offset value
+                self.onLoadSuccess();
+                self.offset = self.length;
+
+                if (response.success === false) {
+                    if (errorCallback) {
+                        errorCallback.apply(self, arguments);
+                    }
+                    return;
+                }
+
+                // If response is shorter than limit -- we think that all has been loaded
+                // If limit is equal to 0, than setting allLoaded immediately
+                // (limit==0 -- loading all elements)
+                var modifiedResponse = response;
+                if (self.parse && _.isFunction(self.parse)) {
+                    modifiedResponse = self.parse(response);
+                }
+
+                if (modifiedResponse.length < self.limit || self.limit == 0) {
+                    self.allLoaded = true;
+                }
+
+                if (successCallback) {
+                    // TODO try to change arguments order:
+                    // because of this fetch.success has arguments (model, response),
+                    // but load.success has arguments (response, collection)
+                    successCallback.call(self, response, collection);
+                }
+            },
+            error: function (args) {
+                if (errorCallback) {
+                    errorCallback.call(self, args);
+                }
+            }
+        });
+        this.loadDfd = this.fetch(options);
+        return this.loadDfd;
+    },
+
+    /**
+     * Loads next elements from the server.
+     * Fires 'add' event.
+     */
+    loadNext: function (options) {
+
+        options = _.extend({
+            loadNext: true
+        }, options);
+        return this.load(options);
+    },
+
+    loadAll: function (options) {
+        this.offset = 0;
+        this.limit = 0;
+        return this.load(options);
+    },
+
+    removeById: function (id, options) {
+        var model = this.get(id);
+        if (model) {
+            this.remove(model, options);
+        }
+    },
+
+    /**
+     * Updates specified model.
+     * Finds it in collection by id and sets its attributes.
+     */
+    update: function (id, attributes) {
+        var model = this.get(id);
+        if (model) {
+            model.set(attributes);
+        }
+    },
+
+    findByAttr: function (attrName, attrValue) {
+        return this.find(function (model) {
+            return model.get(attrName) == attrValue;
+        });
+    },
+
+    filterByAttr: function (attr, value) {
+        return this.filter(function (model) {
+            return model.get(attr) == value;
+        });
     }
 });
 
