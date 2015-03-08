@@ -112,7 +112,7 @@ var BaseCollection = Backbone.Collection.extend({
      */
     defaults: {
         offset: 0,
-        limit: 20,
+        limit: 0,
         url: null
     },
 

@@ -7,7 +7,9 @@
     "permissions": [
         "tabs",
         "storage",
-        "http://promodj.com/*"
+        "http://promodj.com/*",
+        "http://www.mixadance.fm/*",
+        "http://www.garagefm.ru/*"
     ],
     "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
 

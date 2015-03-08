@@ -15,15 +15,16 @@
     <script type="text/javascript" src="/js/libs/template-manager.js"></script>
     <script type="text/javascript" src="/js/common/backbone.js"></script>
     <script type="text/javascript" src="/js/common/popup.js"></script>
+    <script type="text/javascript" src="/js/libs/jquery.marquee.min.js"></script>
 
-    <script id="radio-player-template" type="text/x-jquery-tmpl">
+    <script id="radio-player-template" type="text/x-jquery-template">
         <div class="row">
             <div class="span4">
                 <div class="navbar navbar-fixed-top">
                     <div class="navbar-inner">
                         <div class="container">
                             <div class="loader-container">
-                                <div class="hide-container" {{if !connecting}} style="display:none" {{/if}}>
+                                <div class="hide-loader-container" {{if !connecting}} style="display:none" {{/if}}>
                                     <img src="img/defaults/preloader_10.gif" class="loader-1">
                                     <img src="img/defaults/preloader_10.gif" class="loader-2">
                                     <img src="img/defaults/preloader_10.gif" class="loader-3">
@@ -48,7 +49,7 @@
         </div>
     </script>
 
-    <script id="radio-station-template" type="text/x-jquery-tmpl">
+    <script id="radio-station-template" type="text/x-jquery-template">
         <div class="row">
             <div class="span1"><span class="{{= name}} can_hover radio_logo {{if isActive}}active{{/if}}"></span></div>
             {{if isLoaded}}
@@ -57,6 +58,22 @@
                 </div>
             {{/if}}
         </div>
+    </script>
+
+    <script id="otherfm-template" type="text/x-jquery-template">
+        <div class="row">
+            <div class="span1"><span class="{{= name}} can_hover radio_logo {{if isActive}}active{{/if}}"></span></div>
+            {{if isLoaded}}
+            <div class="span3">
+                <div class="track-placeholder">
+                    <div class="track otherfm_track">
+                        <div class="title">
+                            <a type="_blank" class="title-href" href="{{if trackUrl}} {{= trackUrl}} {{else}}# {{/if}}">{{= trackName}}</a>&nbsp;
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{/if}}
     </script>
 </head>
 <body>

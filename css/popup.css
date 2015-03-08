@@ -339,7 +339,6 @@ span.bitrate, a.bitrate {
 
 .radio_garagefm.can_hover:hover, .radio_garagefm.active {
     background-image: url(/img/logos/garagefm_logo_color.png);
-    margin-left: 115px!important;
 }
 .radio_garagefm {
     width: 70px;
@@ -349,7 +348,9 @@ span.bitrate, a.bitrate {
 
 .radio_mixadancefm.can_hover:hover, .radio_mixadancefm.active {
     background-image: url(/img/logos/mixadance_logo_color.png);
-    margin-left: 115px!important;
+}
+.track.otherfm_track {
+    padding-top: 15px;
 }
 .radio_mixadancefm {
     width: 70px;
@@ -432,6 +433,7 @@ ul.radio-station-list:last-child{
     border-bottom: 1px solid #E6E6E6;
     margin: 5px 0px 0px 0px;
     padding-bottom: 5px;
+    min-height: 71px;
 }
 
 img.logo-img {

@@ -1,16 +1,7 @@
 var workspace = {};
 $(function () {
-    var getLocalStorageItem = function(key) {
+   var getLocalStorageItem = function(key) {
         return localStorage.getItem(key)
-    };
-
-    var showLoader = function(show) {
-        var $loader = $('.hide-loader-container');
-        if (show) {
-            $loader.show();
-        } else {
-            $loader.hide();
-        }
     };
 
     var setLocalStorageItem = function(key, value) {
@@ -149,37 +140,19 @@ $(function () {
                 name: 'brainfck',
                 channelID: 8,
                 stream: "http://radio.maases.com:8000/brainfck-192"
-            }
-        ];
-    };
-
-    var getMixadanceRadioStations = function() {
-        return [
+            },
             {
                 id: 19,
                 name: 'garagefm',
                 channelID: 11,
-                stream: "http://radio.maases.com:8000/garagefm-192",
-                trackInfoUrl: "http://www.garagefm.ru/",
-                trackInfoParseFunc: function(response) {
-                    return $(response).find('#now_playing_track_name').text();
-                }
+                stream: "http://radio.maases.com:8000/garagefm-192"
             },
             {
                 id: 20,
                 name: 'mixadancefm',
                 channelID: 23,
-                stream: "http://radio.maases.com:8000/mixadancefm-192",
-                trackInfoUrl: "http://online.mixadance.fm/song.php?tr=2",
-                trackInfoParseFunc: function(response) {
-                    return $($(response)[1]).text();
-                }
-            }
-        ]
-    };
-
-    var getRadioStationsWithoutTrackInfo = function() {
-        return [
+                stream: "http://radio.maases.com:8000/mixadancefm-192"
+            },
             {
                 id: 21,
                 name: 'pioneerdj',
@@ -205,10 +178,10 @@ $(function () {
                 channelID: 26,
                 stream: "http://radio.maases.com:8000/pacha-192"
             }
-        ]
+        ];
     };
 
-    var PromoDJStationItem = BaseModel.extend({
+    var RadioStationListItemModel = BaseModel.extend({
 
         /*
          *  all custom model fields
@@ -221,46 +194,63 @@ $(function () {
             trackHtml: "",
             trackNameHtml: "",
             isLoaded: false,
-            isActive: false,
-            backboneClass:  "RadioStationListItemModel"
+            isActive: false
         },
 
-        fetch: function(options) {
+        initialize: function() {
+            var id = this.get('id');
+            var isActive = getLocalStorageItem('activeStationId') == id && !isPaused();
+
+            if (isActive && (id < 19)) {
+                this.loadTrackInfo();
+            }
+            this.set({
+                isActive: isActive,
+                isLoaded: isActive
+            });
+        },
+
+        loadTrackInfo: function() {
             var self = this;
-            var isActive = getLocalStorageItem('activeStationId') == this.get('id') && !isPaused();
-            var myOptions = {
-                success: function() {
-                    self.set({
-                        isActive: isActive
-                    });
-                    if (options && options.success) {
-                        options.success();
-                    }
-                }
-            };
-
-
-            if (isActive) {
-                this.loadTrackInfo(myOptions);
+            if (this.get('id') == 20) {
+                this.loadMixadanceInfo();
             } else {
-                myOptions.success();
+                $.ajax({
+                    url: 'http://promodj.com/ajax/radio2_playlist.html',
+                    data: {
+                        digest: 'digest=1894188:~cf0636b2aafc95faa4aecf20c7df5997',
+                        channelID: self.get('channelID')
+                    },
+                    timeout: 5000,
+                    success: function(response) {
+                        self.parseResponse(response);
+                    }
+                });
             }
         },
 
-        loadTrackInfo: function(options) {
+        loadMixadanceInfo: function() {
             var self = this;
             $.ajax({
-                url: 'http://promodj.com/ajax/radio2_playlist.html',
-                data: {
-                    digest: 'digest=1894188:~cf0636b2aafc95faa4aecf20c7df5997',
-                    channelID: self.get('channelID')
-                },
+                url: 'http://online.mixadance.fm/song.php?tr=2',
                 timeout: 5000,
                 success: function(response) {
-                    self.parseResponse(response);
-                    if (options && options.success) {
-                        options.success();
+                    console.log("loadMixadance success");
+                    if (response) {
+                        console.log(response);
+                        console.log($(response)[1]);
+                        self.set({
+                            trackNameHtml: $(response)[1],
+                            isLoaded: true
+                        });
                     }
+                },
+
+                error: function() {
+                    console.log("loadMixadance error");
+                    self.set({
+                        isLoaded: true
+                    });
                 }
             });
         },
@@ -272,74 +262,6 @@ $(function () {
                     isLoaded: true
                 });
             }
-        }
-    });
-
-    var RadioStationItemWithoutTrackInfo = PromoDJStationItem.extend({
-        loadTrackInfo: function(options) {
-            var self = this;
-            var isActive = getLocalStorageItem('activeStationId') == this.get('id') && !isPaused();
-            var myOptions = {
-                success: function() {
-                    self.set({
-                        isLoaded: isActive,
-                        isActive: isActive
-                    });
-                    if (options && options.success) {
-                        options.success();
-                    }
-                }
-            };
-            myOptions.success();
-        }
-    });
-
-    var OtherStationItem = PromoDJStationItem.extend({
-
-        fetch: function(options) {
-            var self = this;
-            var id = this.get('id');
-            var isActive = getLocalStorageItem('activeStationId') == id && !isPaused();
-            var myOptions = {
-                success: function() {
-                    self.set({
-                        isActive: isActive
-                    });
-                    if (options && options.success) {
-                        options.success();
-                    }
-                }
-            };
-
-
-            if (isActive) {
-                this.loadTrackInfo(myOptions);
-            } else {
-                myOptions.success();
-            }
-        },
-
-        loadTrackInfo: function(options) {
-            var self = this;
-            $.ajax({
-                url: self.get('trackInfoUrl'),
-                type: "GET",
-                timeout: 5000,
-                success: function(response) {
-                    if (response) {
-                        var trackName =  self.get('trackInfoParseFunc');
-                        trackName = trackName(response).trim();
-                        self.set({
-                            trackUrl: self.getPromoDJSearchLink(trackName),
-                            trackName: trackName,
-                            isLoaded: true
-                        });
-                    }
-                    if (options && options.success) {
-                        options.success();
-                    }
-                }
-            });
         },
 
         getPromoDJSearchLink: function(trackName) {
@@ -348,14 +270,7 @@ $(function () {
     });
 
     var RadioStationList = Backbone.Collection.extend({
-        model: PromoDJStationItem
-    });
-    //ugly
-    var RadioStationMixadanceList = Backbone.Collection.extend({
-        model: OtherStationItem
-    });
-    var RadioStationListWithoutTrackInfo = Backbone.Collection.extend({
-        model: RadioStationItemWithoutTrackInfo
+        model: RadioStationListItemModel
     });
 
     var RadioStationListItemView = BaseView.extend({
@@ -370,12 +285,14 @@ $(function () {
         onLogoClicked: function (e) {
             if (isPaused()) {
                 if (!this.model.get('isActive')) {
-                    this.model.loadTrackInfo();
+                    if (this.model.get('id') < 19 || this.model.get('id') == 20) {
+                        this.model.loadTrackInfo();
+                    }
                     this.model.set({
                         isActive: true
                     });
                     setLocalStorageItem('activeStationId', this.model.get('id'));
-                    player.model.start(this.model.get('stream'));
+                    this.model.get('radioModel').start(this.model.get('stream'));
                 }
             } else {
                 if (this.model.get('isActive')) {
@@ -384,13 +301,15 @@ $(function () {
                         isLoaded: false
                     });
                     removeLocalStorageItem('activeStationId');
-                    player.model.stop();
+                    this.model.get('radioModel').stop();
                 } else {
-                    this.model.loadTrackInfo();
+                    if (this.model.get('id') < 19 || this.model.get('id') == 20) {
+                        this.model.loadTrackInfo();
+                    }
                     this.model.set({
                         isActive: true
                     });
-                    player.model.start(this.model.get('stream'), getLocalStorageItem('activeStationId'));
+                    this.model.get('radioModel').start(this.model.get('stream'), getLocalStorageItem('activeStationId'));
                     setLocalStorageItem('activeStationId', this.model.get('id'));
                 }
             }
@@ -408,7 +327,12 @@ $(function () {
                 $track.find('.styles_list').remove();
                 $track.find('[onclick]').attr('onclick', '');
                 $track.find('.filepodsafe').remove();
-                var $title = $track.find('.title').find('a').prop('type', '_blank').removeAttr('onclick').removeAttr('amba');;
+                //if (this.model.get('id') == 20) { //feel mixadance track info
+                //    var trackHtml = '<a target="_blank" href="' + this.model.getPromoDJSearchLink($(this.model.get('trackNameHtml')).text()) + '">' + $(this.model.get('trackNameHtml')).text() + '</a>';
+                //    $track.find('.title').html(trackHtml);
+                //    $track.find('.track').addClass('mixadancefm_track');
+                //    $track.find('.icons').remove();
+                //}
             }
             $(this.el).find('.track-placeholder').html(this.model.get('trackHtml'));
             if ($track.find('[ambatitle]').length > 0) {
@@ -421,80 +345,13 @@ $(function () {
                     });
                 });
             }
-            this.scrollToActive();
-        },
-
-
-        scrollToActive: function() {
-            if ($(this.el).find('.active').length > 0 && $(player.el).find('.active').length == 1) {
-                if (!player.model.get('connecting')) {
-                    $('html, body').animate({scrollTop: $('.active').offset().top - 50}, 'slow');
-                }
-            }
         }
     });
 
-    var MixadanceView = RadioStationListItemView.extend({
-        template: "#otherfm-template",
-
-        onLogoClicked: function (e) {
-            if (isPaused()) {
-                if (!this.model.get('isActive')) {
-                    this.model.loadTrackInfo();
-                    this.model.set({
-                        isActive: true
-                    });
-                    setLocalStorageItem('activeStationId', this.model.get('id'));
-                    player.model.start(this.model.get('stream'));
-                }
-            } else {
-                if (this.model.get('isActive')) {
-                    this.model.set({
-                        isActive: false,
-                        isLoaded: false
-                    });
-                    removeLocalStorageItem('activeStationId');
-                    player.model.stop();
-                } else {
-                    this.model.loadTrackInfo();
-                    this.model.set({
-                        isActive: true
-                    });
-                    player.model.start(this.model.get('stream'), getLocalStorageItem('activeStationId'));
-                    setLocalStorageItem('activeStationId', this.model.get('id'));
-                }
-            }
-        },
-
-        afterRender: function() {
-            $(this.el).find('.radio_logo').addClass("radio_" + this.model.get('name'));
-            this.scrollToActive();
-            var $title = $(this.el).find('.title');
-            if ($title.length > 0) {
-                $title.marquee({
-                    //speed in milliseconds of the marquee
-                    speed: 10000,
-                    //gap in pixels between the tickers
-                    gap: 20,
-                    //'left' or 'right'
-                    direction: 'left',
-                    //true or false - should the marquee be duplicated to show an effect of continues flow
-                    duplicated: true
-                });
-            }
-        }
-    });
-
-    var DefaultRadioStationListView = BaseListView.extend({
+    var RadioStationListView = BaseListView.extend({
         className: "radio-station-list",
         tagName: "ul",
         itemViewType: RadioStationListItemView
-    });
-
-    var MixadanceRadioStationListView = BaseListView.extend({
-        className: "radio-station-list",
-        tagName: "ul",
-        itemViewType: MixadanceView
     });
 
     var RadioModel = BaseModel.extend({
@@ -504,10 +361,17 @@ $(function () {
         },
 
         initialize: function () {
+            var self = this;
             var activeStationId = getLocalStorageItem('activeStationId');
-            this.defaultRadioList = new RadioStationList(getDefaultRadioStations());
-            this.mixadanceRadioList = new RadioStationMixadanceList(getMixadanceRadioStations());
-            this.othersRadioList = new RadioStationListWithoutTrackInfo(getRadioStationsWithoutTrackInfo());
+            var radioList = new RadioStationList(getDefaultRadioStations());
+            this.set({
+                radioList: radioList
+            });
+            _.each(this.get('radioList').models, function(model) {
+                model.set({
+                    radioModel: self
+                })
+            });
         },
 
         getAudioElement: function () {
@@ -516,8 +380,7 @@ $(function () {
 
         start: function (stream, oldStationId) {
             if (oldStationId) {
-                var model = this.findModelInRadioLists(oldStationId);
-                model.set({
+                this.get('radioList').at(oldStationId).set({
                     isActive: false,
                     isLoaded: false
                 });
@@ -528,8 +391,7 @@ $(function () {
             this.set({
                 isPaused: this.getAudioElement().paused,
                 connecting: true
-            }, {silent: true});
-            showLoader(true);
+            });
             if (this.get('checkConnectedId')) {
                 clearInterval(this.get('checkConnectedId'));
             }
@@ -540,17 +402,6 @@ $(function () {
             }, {silent: true});
         },
 
-        findModelInRadioLists: function(id) {
-            var model =  _.find(this.defaultRadioList.models, function(model) { return model.get('id') == id});
-            if (model == undefined) {
-                model = _.find(this.mixadanceRadioList.models, function(model) { return model.get('id') == id});
-            }
-            if (model == undefined) {
-                model = _.find(this.othersRadioList.models, function(model) { return model.get('id') == id});
-            }
-            return model;
-        },
-
         stop: function () {
             this.getAudioElement().pause();
             this.getAudioElement().removeEventListener('error', this.connect, false);
@@ -558,8 +409,7 @@ $(function () {
             this.set({
                 isPaused: isPaused(),
                 connecting: false
-            }, {silent: true});
-            showLoader(false);
+            });
             if (this.get('checkConnectedId')) {
                 clearInterval(this.get('checkConnectedId'));
             }
@@ -570,60 +420,7 @@ $(function () {
         },
 
         prefetch: function(options) {
-            this.parallel([this.defaultRadioList, this.mixadanceRadioList, this.othersRadioList, this], options);
-        },
-
-        fetch: function(options) {
             options.success();
-        },
-
-        parallel: function (params, options) {
-            var self = this;
-            var parallelStatus = 0;
-            var length = params.length;
-            var funcOptions = {
-                success: function () {
-                    parallelStatus += 1;
-                    if (parallelStatus === length) {
-                        if (options && options.success) {
-                            options.success(self);
-                        }
-                    }
-                },
-
-                error: function () {
-                    if (options && options.error) {
-                        options.error(self);
-                    }
-                }
-            };
-
-            _(params).each(function (param) {
-                if (_.isFunction(param)) {
-                    param(funcOptions);
-                } else {
-
-                    if (param instanceof Backbone.Collection) {
-                        var modelsLength = param.models.length;
-                        var status = 0;
-                        _.each(param.models, function(model) {
-                            var myOptions = {
-                                success: function(response) {
-                                    status += 1;
-                                    if (status == modelsLength) {
-                                        if (funcOptions && funcOptions.success) {
-                                            funcOptions.success(self);
-                                        }
-                                    }
-                                }
-                            };
-                            model.fetch(myOptions);
-                        });
-                    } else {
-                        param.fetch(funcOptions);
-                    }
-                }
-            });
         },
 
         connect: function (stream) {
@@ -649,8 +446,7 @@ $(function () {
                     self.set({
                         checkCount: cnt++,
                         connecting: true
-                    }, {silent: true});
-                    showLoader(true);
+                    });
                     if (cnt > 5) {
                         self.getAudioElement().play();
                     }
@@ -658,8 +454,7 @@ $(function () {
                     clearInterval(self.get('checkConnectedId'));
                     self.set({
                         connecting: false
-                    }, {silent: true});
-                    showLoader(false);
+                    });
                 }
             }
         }
@@ -672,16 +467,8 @@ $(function () {
         template: "#radio-player-template",
 
         construct: function () {
-            this.addChildAtElement('.radio-list-container', new DefaultRadioStationListView({
-                collection: this.model.defaultRadioList
-            }));
-
-            this.addChildAtElement('.radio-list-container', new MixadanceRadioStationListView({
-                collection: this.model.mixadanceRadioList
-            }));
-
-            this.addChildAtElement('.radio-list-container', new DefaultRadioStationListView({
-                collection: this.model.othersRadioList
+            this.addChildAtElement('.radio-list-container', new RadioStationListView({
+                collection: this.model.get('radioList')
             }));
         },
 
@@ -694,6 +481,14 @@ $(function () {
                 }
                 return false;
             });
+            this.scrollToActive();
+        },
+
+        scrollToActive: function() {
+            var activeStation = $(this.el).find('.active');
+            if (activeStation.length > 0 && !this.model.get('connecting')) {
+                $('html, body').animate({scrollTop: $('.active').offset().top - 50}, 'slow');
+            }
         },
 
         initVolumeSlider: function () {
