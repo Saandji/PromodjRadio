@@ -524,12 +524,13 @@ $(function () {
             }
             var self = this;
             this.connect(stream);
-            this.getAudioElement().addEventListener('error', this.connect);
+            //this.getAudioElement().addEventListener('error', this.connect);
             this.set({
                 isPaused: this.getAudioElement().paused,
                 connecting: true
             }, {silent: true});
             showLoader(true);
+            chrome.extension.sendRequest({ msg: "startChecking" });
             if (this.get('checkConnectedId')) {
                 clearInterval(this.get('checkConnectedId'));
             }
@@ -553,7 +554,7 @@ $(function () {
 
         stop: function () {
             this.getAudioElement().pause();
-            this.getAudioElement().removeEventListener('error', this.connect, false);
+            //this.getAudioElement().removeEventListener('error', this.connect, false);
             this.getAudioElement().src = null;
             this.set({
                 isPaused: isPaused(),
@@ -563,6 +564,7 @@ $(function () {
             if (this.get('checkConnectedId')) {
                 clearInterval(this.get('checkConnectedId'));
             }
+            chrome.extension.sendRequest({ msg: "stopChecking" });
         },
 
         getCurrentTime: function () {
@@ -627,10 +629,16 @@ $(function () {
         },
 
         connect: function (stream) {
-            if (stream) {
-                this.getAudioElement().src = stream;
+            if (_.isFunction(this.getAudioElement)) {
+                if (stream) {
+                    if (_.isFunction(this.getAudioElement)) {
+                        this.getAudioElement().src = stream;
+                    }
+                }
+            } else {
+                chrome.extension.getBackgroundPage().document.querySelector('audio').play();
             }
-            this.getAudioElement().play();
+
         },
 
         XHRequest: function (method, url, async) {
@@ -641,24 +649,28 @@ $(function () {
 
         checkConnected: function () {
             var self = this;
-            if (isPaused()) {
+            if (isPaused() && this.get('connecting') == false) {
+                console.log("isPaused");
                 clearInterval(self.get('checkConnectedId'));
             } else {
+                console.log("currentTime is : " + self.getCurrentTime());
                 if (self.getCurrentTime() == 0) {
                     var cnt = self.get('checksCount') || 0;
                     self.set({
                         checkCount: cnt++,
                         connecting: true
                     }, {silent: true});
+                    console.log("showloader(true)");
                     showLoader(true);
-                    if (cnt > 5) {
-                        self.getAudioElement().play();
-                    }
+                    //if (cnt > 5) {
+                    //    self.getAudioElement().play();
+                    //}
                 } else {
                     clearInterval(self.get('checkConnectedId'));
                     self.set({
                         connecting: false
                     }, {silent: true});
+                    console.log("showloader(false)");
                     showLoader(false);
                 }
             }
